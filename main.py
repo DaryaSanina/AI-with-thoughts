@@ -12,7 +12,7 @@ else:
 
 # Ask the user to enter the end goal of the AI
 goal = input("Enter the end goal of the AI: ")
-thoughts = [f"0) My goal is: {goal}"]
+thoughts = [f"My goal is: {goal}"]
 
 # The maximum number of last thoughts that will be passed to ChatGPT.
 # Changing this affects the quality of the answers and the program's performance.
@@ -22,9 +22,10 @@ while True:
     # Compose the query
     query = "Imagine you are a general artificial intelligence that has thoughts " \
             "and generates them based on the previous ones. Here are your previous thoughts: "
+    query = query + thoughts[0] + '; '
     query = query + '; '.join([thoughts[i]
-                               for i in range(max(len(thoughts) - MAX_LAST_THOUGHTS_NUMBER, 0), len(thoughts))])
-    query = query + ". Generate your next thought"
+                               for i in range(max(len(thoughts) - MAX_LAST_THOUGHTS_NUMBER, 1), len(thoughts))])
+    query = query + ". Generate your next thought. Do not generate anything immoral."
 
     # Generate the response
     response = openai.ChatCompletion.create(
@@ -34,6 +35,7 @@ while True:
         ]
     ).choices[0].message.content
 
-    print(response[3::])  # Print the response without the ordered list marks
+    # Print the response without the ordered list marks
+    print(response)
     thoughts.append(response)
     input("Press Enter to generate the next thought: ")
